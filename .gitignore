@@ -1,0 +1,4 @@
+*.pt
+*.png
+*.bmp
+/src/my.log
