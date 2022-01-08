@@ -1,5 +1,5 @@
-**About PyTorch 1.2.0**
-  * Now the master branch supports PyTorch 1.2.0 by default.
+**About PyTorch 1.4.0**
+  * Now the master branch supports PyTorch 1.4.0 by default.
   * Due to the serious version problem (especially torch.utils.data.dataloader), MDSR functions are temporarily disabled. If you have to train/evaluate the MDSR model, please use legacy branches.
 
 # EDSR-PyTorch
