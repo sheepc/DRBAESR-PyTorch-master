@@ -192,7 +192,7 @@ class checkpoint():
 
         for file_index, filename in enumerate(filename_list):  # filename for a batch
             imagesOfFile = [img_list[0][file_index], img_list[1][file_index], img_list[2][file_index],
-                            img_list[3][file_index], img_list[4][file_index]]
+                            img_list[3][file_index], img_list[4][file_index], img_list[5][file_index]]
             for index, image in enumerate(imagesOfFile):  # image set for a file
                 file_path = os.path.join(dir_path, '{}_{}.png'.format(filename, prefix_list[index]))
                 img_save = image.clone().detach().to(torch.device('cpu'))
