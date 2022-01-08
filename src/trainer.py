@@ -41,7 +41,7 @@ class Trainer():
         lr = self.optimizer.get_lr()
 
         self.ckp.write_log(
-            '[Epoch {}]\tLearning rate: {:.2e}'.format(epoch, Decimal(lr))
+            '[Stage {}][Epoch {}]\tLearning rate: {:.2e}'.format(stage+1, epoch, Decimal(lr))
         )
         self.loss[stage].start_log()
         self.model.train()
@@ -119,7 +119,6 @@ class Trainer():
 
                     if self.args.save_test_results:
                         if epoch % self.args.save_test_results_every == 0:
-                            print("Saving test result images...")
                             self.ckp.save_test_results(d, filename[0], save_list, scale)
 
                 self.ckp.log[-1, idx_data, idx_scale] /= len(d)
@@ -135,7 +134,6 @@ class Trainer():
                 )
 
         self.ckp.write_log('Forward: {:.2f}s\n'.format(timer_test.toc()))
-        self.ckp.write_log('Saving log...')
 
         if self.args.save_test_results:
             self.ckp.end_background()

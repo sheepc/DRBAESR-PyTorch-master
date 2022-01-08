@@ -16,7 +16,7 @@ class First_Stage_Loss(nn.modules.loss._Loss):
     def __init__(self, args, ckp):
         super(First_Stage_Loss, self).__init__()
         print('Preparing First_Stage_Loss function:')
-
+        self.args = args
         self.n_GPUs = args.n_GPUs
         self.loss = []
         self.loss_module = nn.ModuleList()

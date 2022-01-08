@@ -16,7 +16,7 @@ class Second_Stage_Loss(nn.modules.loss._Loss):
     def __init__(self, args, ckp):
         super(Second_Stage_Loss, self).__init__()
         print('Preparing Second_Stage_Loss function:')
-
+        self.args = args
         self.n_GPUs = args.n_GPUs
         self.loss = []
         self.loss_module = nn.ModuleList()
@@ -92,7 +92,7 @@ class Second_Stage_Loss(nn.modules.loss._Loss):
         return ''.join(log)
 
     def plot_loss(self, apath, epoch):
-        axis = np.linspace(1, epoch, epoch)
+        axis = np.linspace(self.args.first_stage_epoch+1, epoch, epoch - self.args.first_stage_epoch)
         for i, l in enumerate(self.loss):
             label = '{} Loss'.format(l['type'])
             fig = plt.figure()

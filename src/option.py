@@ -85,7 +85,7 @@ parser.add_argument('--reduction', type=int, default=16,
 # Training specifications
 parser.add_argument('--reset', action='store_true',
                     help='reset the training')
-parser.add_argument('--test_every', type=int, default=1000,
+parser.add_argument('--test_every', type=int, default=100,
                     help='do test per every N batches')
 parser.add_argument('--epochs', type=int, default=1500,
                     help='number of epochs to train')
@@ -124,8 +124,6 @@ parser.add_argument('--gclip', type=float, default=0,
 # Loss specifications
 parser.add_argument('--skip_threshold', type=float, default='1e8',
                     help='skipping batch that has large error')
-
-# Log specifications
 parser.add_argument('--save', type=str, default='test',
                     help='file name to save')
 parser.add_argument('--load', type=str, default='',
