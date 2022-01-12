@@ -202,7 +202,9 @@ class checkpoint():
                     # img_save = img_save.clamp(0, 255).round()
                     torchvision.utils.save_image(img_save, file_path)
                 else:
-                    img_save = unNormalize(img_save)
+                    if self.args.normalized:
+                        img_save = unNormalize(img_save)
+
                     img_save = img_save.permute(1, 2, 0).type(torch.uint8).numpy()
                     img_save = Image.fromarray(img_save)
                     img_save.save(file_path)

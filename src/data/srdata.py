@@ -135,8 +135,9 @@ class SRData(data.Dataset):
         def normalize(x):
             x = x / 255.0
             return x
-        hr = normalize(hr)
-        lr = normalize(lr)
+        if self.args.normalized:
+            hr = normalize(hr)
+            lr = normalize(lr)
         return lr, hr, filename
 
     def get_patch(self, lr, hr):

@@ -107,9 +107,10 @@ class Trainer():
                 for lr, hr, filename in tqdm(d, ncols=80):
                     lr, hr = self.prepare(lr, hr)
                     [lr_recons, hr_recons, lr_z, hr_z, sr] = self.model(lr, hr)
-                    lr = utility.unNormalize(lr)
-                    hr = utility.unNormalize(hr)
-                    sr = utility.unNormalize(sr)
+                    if self.args.normalized:
+                        lr = utility.unNormalize(lr)
+                        hr = utility.unNormalize(hr)
+                        sr = utility.unNormalize(sr)
                     save_list = [sr]
                     self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                         sr, hr, scale, self.args.rgb_range, dataset=d

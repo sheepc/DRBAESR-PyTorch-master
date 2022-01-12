@@ -43,6 +43,8 @@ parser.add_argument('--chop', action='store_true',
                     help='enable memory-efficient forward')
 parser.add_argument('--no_augment', action='store_true',
                     help='do not use data augmentation')
+parser.add_argument('--normalized', type=bool, default=True,
+                    help='image normalized or not')
 
 # Model specifications
 parser.add_argument('--model', default='RBAE',
@@ -150,7 +152,7 @@ parser.add_argument('--save_test_results_every', type=int, default=20,
 parser.add_argument('--test_result_dir', type=str, default='../experiment/test',
                     help='test result directory')
 # first_stage
-parser.add_argument('--first_stage_loss', type=str, default='1*L1+0*L1+0*L1',
+parser.add_argument('--first_stage_loss', type=str, default='0*L1+0*L1+1*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--first_stage_result_dir', type=str, default='../experiment/first_stage',
                     help='first_stage result directory')
