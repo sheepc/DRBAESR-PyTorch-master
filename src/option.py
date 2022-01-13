@@ -43,7 +43,7 @@ parser.add_argument('--chop', action='store_true',
                     help='enable memory-efficient forward')
 parser.add_argument('--no_augment', action='store_true',
                     help='do not use data augmentation')
-parser.add_argument('--normalized', type=bool, default=True,
+parser.add_argument('-- ', type=bool, default=True,
                     help='image normalized or not')
 
 # Model specifications
