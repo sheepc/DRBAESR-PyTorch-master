@@ -14,7 +14,7 @@ checkpoint = utility.checkpoint(args)
 
 
 def train():
-    logging.info("tarin_stage_one start")
+    logging.info("no down sample start")
     logging.info(args)
     if checkpoint.ok:
         loader = data.Data(args)
