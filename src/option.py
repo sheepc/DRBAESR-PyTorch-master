@@ -89,7 +89,7 @@ parser.add_argument('--reset', action='store_true',
                     help='reset the training')
 parser.add_argument('--test_every', type=int, default=100,
                     help='do test per every N batches')
-parser.add_argument('--epochs', type=int, default=1500,
+parser.add_argument('--epochs', type=int, default=2000,
                     help='number of epochs to train')
 parser.add_argument('--batch_size', type=int, default=16,
                     help='input batch size for training')
@@ -105,7 +105,7 @@ parser.add_argument('--gan_k', type=int, default=1,
 # Optimization specifications
 parser.add_argument('--lr', type=float, default=1e-4,
                     help='learning rate')
-parser.add_argument('--decay', type=str, default='200',
+parser.add_argument('--decay', type=str, default='1200',
                     help='learning rate decay type')
 parser.add_argument('--gamma', type=float, default=0.5,
                     help='learning rate decay factor for step decay')
@@ -140,26 +140,26 @@ parser.add_argument('--print_every', type=int, default=100,
 # train
 parser.add_argument('--save_train_results', default=True,
                     help='save train output results')
-parser.add_argument('--save_train_results_every', type=int, default=20,
+parser.add_argument('--save_train_results_every', type=int, default=50,
                     help='how many epoch to save train results')
 # test
 parser.add_argument('--save_gt', default=True,
                     help='save lr and hr in test')
 parser.add_argument('--save_test_results', default=True,
                     help='save test output results')
-parser.add_argument('--save_test_results_every', type=int, default=20,
+parser.add_argument('--save_test_results_every', type=int, default=50,
                     help='how many epoch to save test results')
 parser.add_argument('--test_result_dir', type=str, default='../experiment/test',
                     help='test result directory')
 # first_stage
-parser.add_argument('--first_stage_loss', type=str, default='0*L1+0*L1+1*L1',
+parser.add_argument('--first_stage_loss', type=str, default='10*L1+0*L1+0*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--first_stage_result_dir', type=str, default='../experiment/first_stage',
                     help='first_stage result directory')
 parser.add_argument('--first_stage_epoch', type=int, default=500,
                     help='first stage epoch number')
 # second_stage
-parser.add_argument('--second_stage_loss', type=str, default='1*L1+1*L1+0*L1',
+parser.add_argument('--second_stage_loss', type=str, default='10*L1+10*L1+0*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--second_stage_result_dir', type=str, default='../experiment/second_stage',
                     help='second_stage result directory')
@@ -167,7 +167,7 @@ parser.add_argument('--second_stage_epoch', type=int, default=1000,
                     help='second stage epoch number')
 
 # third_stage
-parser.add_argument('--third_stage_loss', type=str, default='1*L1+1*L1+1*L1',
+parser.add_argument('--third_stage_loss', type=str, default='10*L1+10*L1+100*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--third_stage_result_dir', type=str, default='../experiment/third_stage',
                     help='third_stage result directory')
