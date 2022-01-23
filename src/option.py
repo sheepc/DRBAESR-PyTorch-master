@@ -25,8 +25,6 @@ parser.add_argument('--dir_demo', type=str, default='../test',
                     help='demo image directory')
 parser.add_argument('--data_train', type=str, default='DIV2K',
                     help='train dataset name')
-parser.add_argument('--data_test', type=str, default='DIV2K',
-                    help='test dataset name')
 parser.add_argument('--data_range', type=str, default='1-800/801-820',
                     help='train/test data range')
 parser.add_argument('--ext', type=str, default='sep',
@@ -52,10 +50,6 @@ parser.add_argument('--model', default='RBAE',
 
 parser.add_argument('--act', type=str, default='relu',
                     help='activation function')
-parser.add_argument('--pre_train', type=str, default='',
-                    help='pre-trained model directory')
-parser.add_argument('--extend', type=str, default='.',
-                    help='pre-trained model directory')
 parser.add_argument('--n_resblocks', type=int, default=16,
                     help='number of residual blocks')
 parser.add_argument('--n_feats', type=int, default=64,
@@ -97,10 +91,7 @@ parser.add_argument('--split_batch', type=int, default=1,
                     help='split the batch into smaller chunks')
 # parser.add_argument('--self_ensemble', action='store_true',
 #                     help='use self-ensemble method for test')
-parser.add_argument('--test_only', action='store_true',
-                    help='set this option to test the model')
-parser.add_argument('--gan_k', type=int, default=1,
-                    help='k value for adversarial loss')
+
 
 # Optimization specifications
 parser.add_argument('--lr', type=float, default=1e-4,
@@ -130,8 +121,6 @@ parser.add_argument('--save', type=str, default='test',
                     help='file name to save')
 parser.add_argument('--load', type=str, default='',
                     help='file name to load')
-parser.add_argument('--resume', type=int, default=0,
-                    help='resume from specific checkpoint')
 parser.add_argument('--save_models', default=True,
                     help='save all intermediate models')
 parser.add_argument('--print_every', type=int, default=100,
@@ -172,12 +161,18 @@ parser.add_argument('--third_stage_loss', type=str, default='10*L1+10*L1+100*L1'
 parser.add_argument('--third_stage_result_dir', type=str, default='../experiment/third_stage',
                     help='third_stage result directory')
 
-# parser.add_argument('--LOSS_RECONSTRUCT', type=str, default='L1',
-#                     help='loss function for reconstruct image HR, HR_Recons, LR, LR_Recons')
-# parser.add_argument('--LOSS_Z', type=str, default='L1',
-#                     help='loss function for LR_Z and HR_Z')
-# parser.add_argument('--LOSS_SR', type=str, default='L1',
-#                     help='loss function for SR and HR')
+#valid
+parser.add_argument('--testpath', type=str, default='../dataset/',
+                    help='dataset directory for testing')
+parser.add_argument('--data_test', type=str, default='Set5',
+                    help='test dataset name')
+parser.add_argument('--test_only', type=bool, default=False,
+                    help='set this option to test the model')
+parser.add_argument('--resume', type=int, default=-1,
+                    help='resume from specific checkpoint,-1 for model_latest,0 for pre_train,else for model_{}.pt')
+parser.add_argument('--pre_train', type=str, default='',
+                    help='pre-trained model path')
+
 
 args = parser.parse_args()
 template.set_template(args)

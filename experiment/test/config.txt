@@ -29898,3 +29898,74 @@ second_stage_epoch: 1000
 third_stage_loss: 1*L1+1*L1+1*L1
 third_stage_result_dir: ../experiment/third_stage
 
+2022-01-20-23:47:26
+
+debug: False
+template: .
+n_threads: 1
+cpu: False
+n_GPUs: 1
+seed: 1
+dir_data: ../dataset
+dir_demo: ../test
+data_train: ['DIV2K']
+data_range: 1-800/801-820
+ext: sep
+scale: [2]
+patch_size: 64
+rgb_range: 255
+n_colors: 3
+chop: False
+no_augment: False
+normalized: True
+model: RBAE
+act: relu
+n_resblocks: 16
+n_feats: 64
+res_scale: 1
+dilation: False
+precision: single
+G0: 64
+RDNkSize: 3
+RDNconfig: B
+n_resgroups: 10
+reduction: 16
+reset: False
+test_every: 100
+epochs: 2000
+batch_size: 16
+split_batch: 1
+lr: 0.0001
+decay: 1200
+gamma: 0.5
+optimizer: ADAM
+momentum: 0.9
+betas: (0.9, 0.999)
+epsilon: 1e-08
+weight_decay: 0
+gclip: 0
+skip_threshold: 100000000.0
+save: test
+load: 
+save_models: True
+print_every: 100
+save_train_results: True
+save_train_results_every: 50
+save_gt: True
+save_test_results: True
+save_test_results_every: 50
+test_result_dir: ../experiment/test
+first_stage_loss: 10*L1+0*L1+0*L1
+first_stage_result_dir: ../experiment/first_stage
+first_stage_epoch: 500
+second_stage_loss: 10*L1+10*L1+0*L1
+second_stage_result_dir: ../experiment/second_stage
+second_stage_epoch: 1000
+third_stage_loss: 10*L1+10*L1+100*L1
+third_stage_result_dir: ../experiment/third_stage
+testpath: ../dataset/
+data_test: ['Set5']
+test_only: True
+resume: -1
+pre_train: 
+
