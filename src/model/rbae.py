@@ -135,18 +135,17 @@ class LRDecoder(nn.Module):
         self.body = nn.Sequential(*modules_body)
 
         self.conv_2 = nn.Conv2d(self.n_feat, 3, kernel_size=3, stride=1, padding=1)
-        # self.activation = nn.Sigmoid()
-        if self.args.normalized:
-            self.clamp = torch.clamp(0, 1)
-        else:
-            self.clamp = torch.clamp(0, 255)
 
     def forward(self, x):
         x = self.conv_1(x)
         res = self.body(x)
         res += x
         res = self.conv_2(res)
-        res = self.clamp(res)
+        # self.activation = nn.Sigmoid()
+        if self.args.normalized:
+            res = torch.clamp(res, 0, 1)
+        else:
+            res = torch.clamp(res, 0, 255)
         return res
 
 
@@ -204,16 +203,15 @@ class HRDecoder(nn.Module):
         self.body = nn.Sequential(*modules_body)
         self.conv_2 = nn.Conv2d(self.n_feat, 3, kernel_size=3, stride=1, padding=1)
         # self.activation = nn.Sigmoid()
-        if self.args.normalized:
-            self.clamp = torch.clamp(0, 1)
-        else:
-            self.clamp = torch.clamp(0, 255)
 
     def forward(self, x):
         x = self.conv_1(x)
         x = self.body(x)
         x = self.conv_2(x)
-        x = self.clamp(x)
+        if self.args.normalized:
+            x = torch.clamp(x, 0, 1)
+        else:
+            x = torch.clamp(x, 0, 255)
         return x
 
 
