@@ -141,14 +141,14 @@ parser.add_argument('--save_test_results_every', type=int, default=50,
 parser.add_argument('--test_result_dir', type=str, default='../experiment/test',
                     help='test result directory')
 # first_stage
-parser.add_argument('--first_stage_loss', type=str, default='10*L1+0*L1+0*L1',
+parser.add_argument('--first_stage_loss', type=str, default='100*L1+0*L1+0*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--first_stage_result_dir', type=str, default='../experiment/first_stage',
                     help='first_stage result directory')
 parser.add_argument('--first_stage_epoch', type=int, default=500,
                     help='first stage epoch number')
 # second_stage
-parser.add_argument('--second_stage_loss', type=str, default='10*L1+10*L1+0*L1',
+parser.add_argument('--second_stage_loss', type=str, default='100*L1+100*L1+0*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--second_stage_result_dir', type=str, default='../experiment/second_stage',
                     help='second_stage result directory')
@@ -156,7 +156,7 @@ parser.add_argument('--second_stage_epoch', type=int, default=1000,
                     help='second stage epoch number')
 
 # third_stage
-parser.add_argument('--third_stage_loss', type=str, default='10*L1+10*L1+100*L1',
+parser.add_argument('--third_stage_loss', type=str, default='100*L1+100*L1+1000*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--third_stage_result_dir', type=str, default='../experiment/third_stage',
                     help='third_stage result directory')
