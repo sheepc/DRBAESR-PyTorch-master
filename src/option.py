@@ -169,7 +169,7 @@ parser.add_argument('--data_test', type=str, default='Set5',
 parser.add_argument('--test_only', type=bool, default=False,
                     help='set this option to test the model')
 parser.add_argument('--resume', type=int, default=0,
-                    help='resume from specific checkpoint,-1 for model_latest,0 for pre_train,else for model_{}.pt')
+                    help='resume from specific checkpoint,-1 for model_latest,-2 for model_best,0 for pre_train,else for model_{}.pt')
 parser.add_argument('--pre_train', type=str, default='',
                     help='pre-trained model path')
 
