@@ -18,7 +18,7 @@ import imageio
 import torch
 import torch.optim as optim
 import torch.optim.lr_scheduler as lrs
-
+from pytorch_msssim import ssim
 
 class timer():
     def __init__(self):
@@ -56,7 +56,8 @@ class checkpoint():
     def __init__(self, args):
         self.args = args
         self.ok = True
-        self.log = torch.Tensor()
+        self.psnr_log = torch.Tensor()
+        self.ssim_log = torch.Tensor()
         now = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
 
         if not args.load:
@@ -66,8 +67,9 @@ class checkpoint():
         else:
             self.dir = os.path.join('..', 'experiment', args.load)
             if os.path.exists(self.dir):
-                self.log = torch.load(self.get_path('psnr_log.pt'))
-                print('Continue from epoch {}...'.format(len(self.log)))
+                self.psnr_log = torch.load(self.get_path('psnr_log.pt'))
+                self.ssim_log = torch.load(self.get_path('ssim_log.pt'))
+                print('Continue from epoch {}...'.format(len(self.psnr_log)))
             else:
                 args.load = ''
 
@@ -106,11 +108,14 @@ class checkpoint():
         trainer.loss[stage].plot_loss(self.dir, epoch)
 
         self.plot_psnr(epoch)
+        self.plot_ssim(epoch)
         trainer.optimizer.save(self.dir)
-        torch.save(self.log, self.get_path('psnr_log.pt'))
+        torch.save(self.psnr_log, self.get_path('psnr_log.pt'))
+        torch.save(self.ssim_log, self.get_path('ssim_log.pt'))
 
-    def add_log(self, log):
-        self.log = torch.cat([self.log, log])
+    def add_log(self, psnr_log, ssim_log):
+        self.psnr_log = torch.cat([self.psnr_log, psnr_log])
+        self.ssim_log = torch.cat([self.ssim_log, ssim_log])
 
     def write_log(self, log, refresh=False):
         print(log)
@@ -131,14 +136,33 @@ class checkpoint():
             for idx_scale, scale in enumerate(self.args.scale):
                 plt.plot(
                     axis,
-                    self.log[:, idx_data, idx_scale].numpy(),
+                    self.psnr_log[:, idx_data, idx_scale].numpy(),
                     label='Scale {}'.format(scale)
                 )
             plt.legend()
             plt.xlabel('Epochs')
             plt.ylabel('PSNR')
             plt.grid(True)
-            plt.savefig(self.get_path('test_{}.pdf'.format(d)))
+            plt.savefig(self.get_path('test_PSNR_{}.pdf'.format(d)))
+            plt.close(fig)
+
+    def plot_ssim(self, epoch):
+        axis = np.linspace(1, epoch, epoch)
+        for idx_data, d in enumerate(self.args.data_test):
+            label = 'SR on {}'.format(d)
+            fig = plt.figure()
+            plt.title(label)
+            for idx_scale, scale in enumerate(self.args.scale):
+                plt.plot(
+                    axis,
+                    self.ssim_log[:, idx_data, idx_scale].numpy(),
+                    label='Scale {}'.format(scale)
+                )
+            plt.legend()
+            plt.xlabel('Epochs')
+            plt.ylabel('SSIM')
+            plt.grid(True)
+            plt.savefig(self.get_path('test_SSIM_{}.pdf'.format(d)))
             plt.close(fig)
 
     def begin_background(self):
@@ -234,6 +258,8 @@ def calc_psnr(sr, hr, scale, rgb_range, dataset=None):
 
     return -10 * math.log10(mse)
 
+def calc_ssim(sr, hr, scale, rgb_range, dataset=None):
+    return ssim(sr, hr, rgb_range)
 
 def make_optimizer(args, target):
     '''

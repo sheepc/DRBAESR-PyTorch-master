@@ -95,6 +95,7 @@ class Trainer():
 
         self.ckp.write_log('\nEvaluation:')
         self.ckp.add_log(
+            torch.zeros(1, len(self.loader_test), len(self.scale)),
             torch.zeros(1, len(self.loader_test), len(self.scale))
         )
         self.model.eval()
@@ -112,8 +113,11 @@ class Trainer():
                         hr = utility.unNormalize(hr)
                         sr = utility.unNormalize(sr)
                     save_list = [sr]
-                    self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
+                    self.ckp.psnr_log[-1, idx_data, idx_scale] += utility.calc_psnr(
                         sr, hr, scale, self.args.rgb_range, dataset=d
+                    )
+                    self.ckp.ssim_log[-1, idx_data, idx_scale] += utility.calc_ssim(
+                        sr, hr, scale, self.args.rgb_range
                     )
                     if self.args.save_gt:
                         save_list.extend([lr, hr])
@@ -122,15 +126,20 @@ class Trainer():
                         if epoch % self.args.save_test_results_every == 0:
                             self.ckp.save_test_results(d, filename[0], save_list, scale)
 
-                self.ckp.log[-1, idx_data, idx_scale] /= len(d)
-                best = self.ckp.log.max(0)
+                self.ckp.psnr_log[-1, idx_data, idx_scale] /= len(d)
+                self.ckp.ssim_log[-1, idx_data, idx_scale] /= len(d)
+                best = self.ckp.psnr_log.max(0)
+                best_ssim = self.ckp.ssim_log.max(0)
                 self.ckp.write_log(
-                    '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})'.format(
+                    '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})\tSSIM: {:.3f} (Best: {:.3f} @epoch {})'.format(
                         d.dataset.name,
                         scale,
-                        self.ckp.log[-1, idx_data, idx_scale],
+                        self.ckp.psnr_log[-1, idx_data, idx_scale],
                         best[0][idx_data, idx_scale],
-                        best[1][idx_data, idx_scale] + 1
+                        best[1][idx_data, idx_scale] + 1,
+                        self.ckp.ssim_log[-1, idx_data, idx_scale],
+                        best_ssim[0][idx_data, idx_scale],
+                        best_ssim[1][idx_data, idx_scale] + 1,
                     )
                 )
 
