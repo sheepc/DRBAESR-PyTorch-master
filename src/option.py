@@ -161,6 +161,12 @@ parser.add_argument('--third_stage_loss', type=str, default='100*L1+100*L1+1000*
 parser.add_argument('--third_stage_result_dir', type=str, default='../experiment/third_stage',
                     help='third_stage result directory')
 
+parser.add_argument('--first_stage_hr_loss_weight', type=int, default='1',
+                    help='first_stage hr loss weight')
+parser.add_argument('--second_stage_hr_loss_weight', type=int, default='1',
+                    help='second_stage hr loss weight')
+parser.add_argument('--third_stage_hr_loss_weight', type=int, default='1',
+                    help='third_stage hr loss weight')
 #valid
 parser.add_argument('--testpath', type=str, default='../dataset/',
                     help='dataset directory for testing')

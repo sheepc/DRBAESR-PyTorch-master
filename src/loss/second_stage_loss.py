@@ -53,7 +53,7 @@ class Second_Stage_Loss(nn.modules.loss._Loss):
     def forward(self, lr, hr, lr_recons, hr_recons, lr_z, hr_z, sr):
         losses = []
         # reconstruct loss
-        reconstruct_loss = self.loss[0]['weight'] * (self.loss[0]['function'](lr, lr_recons) + self.loss[0]['function'](hr, hr_recons))
+        reconstruct_loss = self.loss[0]['weight'] * self.loss[0]['function'](lr, lr_recons) + self.args.second_stage_hr_loss_weight * self.loss[0]['function'](hr, hr_recons)
         losses.append(reconstruct_loss)
         self.log[-1, 0] = reconstruct_loss.item()
 
