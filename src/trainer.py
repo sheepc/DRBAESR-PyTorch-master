@@ -131,7 +131,7 @@ class Trainer():
                 best = self.ckp.psnr_log.max(0)
                 best_ssim = self.ckp.ssim_log.max(0)
                 self.ckp.write_log(
-                    '[{} x{}]\tPSNR: {:.3f} (Best: {:.3f} @epoch {})\tSSIM: {:.4f} (Best: {:.4f} @epoch {})'.format(
+                    '[{} x{}]\tPSNR: {:.5f} (Best: {:.5f} @epoch {})\tSSIM: {:.6f} (Best: {:.6f} @epoch {})'.format(
                         d.dataset.name,
                         scale,
                         self.ckp.psnr_log[-1, idx_data, idx_scale],
