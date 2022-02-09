@@ -1,0 +1,7 @@
+x2 1 baby_x2_SR.png: PSNR= 38.780792 SSIM= 0.967777
+x2 2 bird_x2_SR.png: PSNR= 42.970061 SSIM= 0.990281
+x2 3 butterfly_x2_SR.png: PSNR= 35.158085 SSIM= 0.977727
+x2 4 head_x2_SR.png: PSNR= 35.976594 SSIM= 0.890982
+x2 5 woman_x2_SR.png: PSNR= 36.391843 SSIM= 0.974734
+--------Mean--------
+x2: PSNR= 37.855475 SSIM= 0.960300
