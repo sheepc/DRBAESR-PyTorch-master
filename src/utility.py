@@ -18,7 +18,8 @@ import imageio
 import torch
 import torch.optim as optim
 import torch.optim.lr_scheduler as lrs
-from pytorch_msssim import ssim
+# from pytorch_msssim import ssim
+from piq import ssim
 
 class timer():
     def __init__(self):
@@ -259,7 +260,7 @@ def calc_psnr(sr, hr, scale, rgb_range, dataset=None):
     return -10 * math.log10(mse)
 
 def calc_ssim(sr, hr, scale, rgb_range, dataset=None):
-    return ssim(sr, hr, rgb_range)
+    return ssim(sr, hr, data_range=rgb_range)
 
 def make_optimizer(args, target):
     '''

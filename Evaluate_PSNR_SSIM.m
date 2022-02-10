@@ -5,7 +5,7 @@ clear all; close all; clc
 %% set path
 degradation = 'BI'; % BI, BD
 methods = {'RBAE'};
-dataset = {'Set5'};
+dataset = {'Set14'};
 ext = {'*.jpg', '*.png', '*.bmp'};
 num_method = length(methods);
 num_set = length(dataset);
