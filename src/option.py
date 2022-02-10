@@ -81,7 +81,7 @@ parser.add_argument('--reduction', type=int, default=16,
 # Training specifications
 parser.add_argument('--reset', action='store_true',
                     help='reset the training')
-parser.add_argument('--test_every', type=int, default=100,
+parser.add_argument('--test_every', type=int, default=500,
                     help='do test per every N batches')
 parser.add_argument('--epochs', type=int, default=2000,
                     help='number of epochs to train')
@@ -141,14 +141,14 @@ parser.add_argument('--save_test_results_every', type=int, default=50,
 parser.add_argument('--test_result_dir', type=str, default='../experiment/test',
                     help='test result directory')
 # first_stage
-parser.add_argument('--first_stage_loss', type=str, default='100*L1+0*L1+0*L1',
+parser.add_argument('--first_stage_loss', type=str, default='100000*L1+0*L1+0*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--first_stage_result_dir', type=str, default='../experiment/first_stage',
                     help='first_stage result directory')
 parser.add_argument('--first_stage_epoch', type=int, default=500,
                     help='first stage epoch number')
 # second_stage
-parser.add_argument('--second_stage_loss', type=str, default='100*L1+100*L1+0*L1',
+parser.add_argument('--second_stage_loss', type=str, default='100000*L1+300000*L1+0*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--second_stage_result_dir', type=str, default='../experiment/second_stage',
                     help='second_stage result directory')
@@ -156,16 +156,16 @@ parser.add_argument('--second_stage_epoch', type=int, default=1000,
                     help='second stage epoch number')
 
 # third_stage
-parser.add_argument('--third_stage_loss', type=str, default='100*L1+100*L1+1000*L1',
+parser.add_argument('--third_stage_loss', type=str, default='100000*L1+500000*L1+1000000*L1',
                     help='first_stage_loss function configuration')
 parser.add_argument('--third_stage_result_dir', type=str, default='../experiment/third_stage',
                     help='third_stage result directory')
 
-parser.add_argument('--first_stage_hr_loss_weight', type=int, default='1',
+parser.add_argument('--first_stage_hr_loss_weight', type=int, default='200000',
                     help='first_stage hr loss weight')
-parser.add_argument('--second_stage_hr_loss_weight', type=int, default='1',
+parser.add_argument('--second_stage_hr_loss_weight', type=int, default='300000',
                     help='second_stage hr loss weight')
-parser.add_argument('--third_stage_hr_loss_weight', type=int, default='1',
+parser.add_argument('--third_stage_hr_loss_weight', type=int, default='500000',
                     help='third_stage hr loss weight')
 #valid
 parser.add_argument('--testpath', type=str, default='../dataset/',
