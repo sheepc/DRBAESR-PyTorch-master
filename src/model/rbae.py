@@ -10,6 +10,46 @@ def make_model(args, parent=False):
     return RBAE(args)
 
 
+## Channel Attention (CA) Layer
+class CALayer(nn.Module):
+    def __init__(self, n_feat, reduction=16):
+        super(CALayer, self).__init__()
+        # global average pooling: feature --> point
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        # feature channel downscale and upscale --> channel weight
+        self.conv_du = nn.Sequential(
+                nn.Conv2d(n_feat, n_feat // reduction, 1, padding=0, bias=True),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(n_feat // reduction, n_feat, 1, padding=0, bias=True),
+                nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        y = self.avg_pool(x)
+        y = self.conv_du(y)
+        return x * y
+
+## Residual Channel Attention Block (RCAB)
+class RCAB(nn.Module):
+    def __init__(self, n_feat, factor):
+
+        super(RCAB, self).__init__()
+        modules_body = []
+        for i in range(2):
+            modules_body.append(nn.Conv2d(n_feat, n_feat * factor, kernel_size=3, stride=1, padding=1))
+            #if bn: modules_body.append(nn.BatchNorm2d(n_feat))
+            if i == 0: modules_body.append(nn.ReLU())
+        modules_body.append(CALayer(n_feat))
+        self.body = nn.Sequential(*modules_body)
+
+    def forward(self, x):
+        res = self.body(x)
+        #res = self.body(x).mul(self.res_scale)
+        res += x
+        return res
+
+
+
 ## Residual Block (RB)
 # n_feat -> n_feat
 # h -> h
@@ -29,6 +69,7 @@ class RB(nn.Module):
         return res
 
 
+
 ##Residual Block Group(RBG)
 # n_feat -> n_feat
 # h -> h
@@ -38,7 +79,8 @@ class RBG(nn.Module):
         super(RBG, self).__init__()
         modules_body = []
         for i in range(n_rb):
-            modules_body.append(RB(n_feat, factor))
+            modules_body.append(RCAB(n_feat, factor))
+            #modules_body.append(RB(n_feat, factor))
         self.body = nn.Sequential(*modules_body)
         self.conv = nn.Conv2d(n_feat, n_feat, kernel_size=3, stride=1, padding=1)
 
@@ -47,6 +89,27 @@ class RBG(nn.Module):
         res += x
         res = self.conv(res)
         return res
+
+##Residual Block Group-Group(RBGG)
+# n_feat -> n_feat
+# h -> h
+# w -> w
+class RBGG(nn.Module):
+    def __init__(self, n_rbg, n_rb, n_feat, factor):
+        super(RBGG, self).__init__()
+        modules_body = []
+        for i in range(n_rbg):
+            modules_body.append(RBG(n_rb, n_feat, factor))
+        self.body = nn.Sequential(*modules_body)
+        self.conv = nn.Conv2d(n_feat, n_feat, kernel_size=3, stride=1, padding=1)
+
+    def forward(self, x):
+        res = self.body(x)
+        res += x
+        res = self.conv(res)
+        return res
+
+
 
 
 # Down Sample Block
@@ -58,9 +121,9 @@ class DownSampler(nn.Module):
         super(DownSampler, self).__init__()
         modules_body = []
         modules_body.append(nn.Conv2d(n_feat, n_feat * factor, kernel_size=3, stride=2, padding=1))
-        modules_body.append(nn.Conv2d(n_feat * factor, n_feat * factor, kernel_size=3, stride=1, padding=1))
-        modules_body.append(nn.LeakyReLU())
-        modules_body.append(nn.Conv2d(n_feat * factor, n_feat, kernel_size=1, stride=1, padding=0))
+        modules_body.append(nn.Conv2d(n_feat * factor, n_feat * factor, kernel_size=1, stride=1, padding=0))
+        #modules_body.append(nn.LeakyReLU())
+        #modules_body.append(nn.Conv2d(n_feat * factor, n_feat, kernel_size=1, stride=1, padding=0))
         self.body = nn.Sequential(*modules_body)
 
     def forward(self, x):
@@ -78,11 +141,11 @@ class UpSampler(nn.Module):
         modules_body = []
         modules_body.append(
             nn.Conv2d(in_channels=n_feat, out_channels=n_feat * factor, kernel_size=3, stride=1, padding=1))
-        modules_body.append(
-            nn.Conv2d(in_channels=n_feat * factor, out_channels=n_feat * factor, kernel_size=1, stride=1, padding=0))
         modules_body.append(nn.PixelShuffle(int(math.sqrt(factor))))
-        # modules_body.append(nn.Sigmoid())
+        #modules_body.append(
+           # nn.Conv2d(in_channels=n_feat, out_channels=n_feat, kernel_size=3, stride=1, padding=1))
 
+        # modules_body.append(nn.Sigmoid())
         self.body = nn.Sequential(*modules_body)
 
     def forward(self, x):
@@ -96,25 +159,21 @@ class LREncoder(nn.Module):
     def __init__(self, args):
         super(LREncoder, self).__init__()
         self.args = args
-        self.n_rb = 6
-        self.n_rbg = 3
+        self.n_rb = 3
+        self.n_rbg = 1
         self.n_feat = 64
         self.factor = 1
 
         modules_body = []
         self.conv_1 = nn.Conv2d(3, self.n_feat, kernel_size=3, stride=1, padding=1)
 
-        for i in range(self.n_rbg):
-            modules_body.append(RBG(self.n_rb, self.n_feat, self.factor))
-        self.body = nn.Sequential(*modules_body)
+        self.body = RBGG(self.n_rbg, self.n_rb, self.n_feat, self.factor)
 
-        self.conv_2 = nn.Conv2d(self.n_feat, self.n_feat, kernel_size=3, stride=1, padding=1)
 
     def forward(self, x):
         x = self.conv_1(x)
         res = self.body(x)
-        res += x
-        res = self.conv_2(res)
+
         return res
 
 
@@ -122,26 +181,23 @@ class LRDecoder(nn.Module):
     def __init__(self, args):
         super(LRDecoder, self).__init__()
         self.args = args
-        self.n_rb = 6
-        self.n_rbg = 3
+        self.n_rb = 3
+        self.n_rbg = 1
         self.n_feat = 64
         self.factor = 1
 
-        modules_body = []
-        self.conv_1 = nn.Conv2d(self.n_feat, self.n_feat, kernel_size=3, stride=1, padding=1)
+        #modules_body = []
+        #self.conv_1 = nn.Conv2d(self.n_feat, self.n_feat, kernel_size=3, stride=1, padding=1)
 
-        for i in range(self.n_rbg):
-            modules_body.append(RBG(self.n_rb, self.n_feat, self.factor))
-        self.body = nn.Sequential(*modules_body)
+        self.body = RBGG(self.n_rbg, self.n_rb, self.n_feat, self.factor)
 
         self.conv_2 = nn.Conv2d(self.n_feat, 3, kernel_size=3, stride=1, padding=1)
+        # self.activation = nn.Sigmoid()
 
     def forward(self, x):
-        x = self.conv_1(x)
+        #x = self.conv_1(x)
         res = self.body(x)
-        res += x
         res = self.conv_2(res)
-        # self.activation = nn.Sigmoid()
         if self.args.normalized:
             res = torch.clamp(res, 0, 1)
         else:
@@ -155,28 +211,24 @@ class HREncoder(nn.Module):
     def __init__(self, args):
         super(HREncoder, self).__init__()
         self.args = args
-        self.n_rb = 6
-        self.n_rbg = 3
+        self.n_rb = 3
+        self.n_rbg = 1
         self.n_feat = 64
         self.factor = 1
         self.scale = 2
 
         self.conv_1 = nn.Conv2d(3, self.n_feat, kernel_size=3, stride=1, padding=1)
         modules_body = []
-        for i in range(self.n_rbg//2):
-            modules_body.append(RBG(self.n_rb, self.n_feat, self.factor))
-
+        modules_body.append(RB(self.n_feat, self.factor))
         modules_body.append(DownSampler(self.n_feat, self.factor))
-        for i in range(self.n_rbg - self.n_rbg//2):
-            modules_body.append(RBG(self.n_rb, self.n_feat, self.factor))
-
+        modules_body.append(RBGG(self.n_rbg, self.n_rb, self.n_feat, self.factor))
         self.body = nn.Sequential(*modules_body)
-        self.conv_2 = nn.Conv2d(self.n_feat, self.n_feat, kernel_size=3, stride=1, padding=1)
+        #self.conv_2 = nn.Conv2d(self.n_feat, self.n_feat, kernel_size=3, stride=1, padding=1)
 
     def forward(self, x):
         x = self.conv_1(x)
         x = self.body(x)
-        x = self.conv_2(x)
+        #x = self.conv_2(x)
         return x
 
 
@@ -184,28 +236,23 @@ class HRDecoder(nn.Module):
     def __init__(self, args):
         super(HRDecoder, self).__init__()
         self.args = args
-        self.n_rb = 6
-        self.n_rbg = 3
+        self.n_rb = 12
+        self.n_rbg = 6
         self.n_feat = 64
         self.factor = 1
         self.scale = 2
 
-        self.conv_1 = nn.Conv2d(self.n_feat, self.n_feat, kernel_size=3, stride=1, padding=1)
+        #self.conv_1 = nn.Conv2d(self.n_feat, self.n_feat, kernel_size=3, stride=1, padding=1)
         modules_body = []
-        for i in range(self.n_rbg // 2):
-            modules_body.append(RBG(self.n_rb, self.n_feat, self.factor))
-
+        modules_body.append(RBGG(self.n_rbg, self.n_rb, self.n_feat, self.factor))
         modules_body.append(UpSampler(self.n_feat, self.scale*self.scale))
-
-        for i in range(self.n_rbg - self.n_rbg // 2):
-            modules_body.append(RBG(self.n_rb, self.n_feat, self.factor))
-
+        #modules_body.append(RBGG(self.n_rbg, self.n_rb, self.n_feat, self.factor))
         self.body = nn.Sequential(*modules_body)
         self.conv_2 = nn.Conv2d(self.n_feat, 3, kernel_size=3, stride=1, padding=1)
         # self.activation = nn.Sigmoid()
 
     def forward(self, x):
-        x = self.conv_1(x)
+        #x = self.conv_1(x)
         x = self.body(x)
         x = self.conv_2(x)
         if self.args.normalized:
