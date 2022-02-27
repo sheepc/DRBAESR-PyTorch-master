@@ -14,7 +14,7 @@ class Model(nn.Module):
 
         self.scale = args.scale
         # self.input_large = (args.model == 'VDSR')
-        # self.self_ensemble = args.self_ensemble
+        self.self_ensemble = args.self_ensemble
         self.chop = args.chop
         self.precision = args.precision
         self.cpu = args.cpu
