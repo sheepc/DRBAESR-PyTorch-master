@@ -89,8 +89,8 @@ parser.add_argument('--batch_size', type=int, default=16,
                     help='input batch size for training')
 parser.add_argument('--split_batch', type=int, default=1,
                     help='split the batch into smaller chunks')
-# parser.add_argument('--self_ensemble', action='store_true',
-#                     help='use self-ensemble method for test')
+parser.add_argument('--self_ensemble', action='store_true',
+                    help='use self-ensemble method for test')
 
 
 # Optimization specifications

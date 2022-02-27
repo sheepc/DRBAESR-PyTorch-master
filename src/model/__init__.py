@@ -45,7 +45,16 @@ class Model(nn.Module):
             else:
                 return self.model(lr, hr)
         else:
-            forward_function = self.model.forward
+            if self.chop:
+                forward_function = self.forward_chop
+            else:
+                forward_function = self.model.forward
+
+            if self.self_ensemble:
+                return self.forward_x8(x, forward_function=forward_function)
+            else:
+                return forward_function(lr, hr)
+
             return forward_function(lr, hr)
 
     def save(self, apath, epoch, is_best=False):

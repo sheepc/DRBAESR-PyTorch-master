@@ -236,8 +236,8 @@ class HRDecoder(nn.Module):
     def __init__(self, args):
         super(HRDecoder, self).__init__()
         self.args = args
-        self.n_rb = 12
-        self.n_rbg = 6
+        self.n_rb = 6
+        self.n_rbg = 1
         self.n_feat = 64
         self.factor = 1
         self.scale = 2
