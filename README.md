@@ -24,8 +24,8 @@
 ## Code
 Clone this repository into any place you want.
 ```bash
-git clone https://github.com/thstkdgus35/EDSR-PyTorch
-cd EDSR-PyTorch
+git clone https://github.com/sheepc/DRBAESR-PyTorch-master
+cd DRBAESR-PyTorch-master
 ```
 
 ## Quickstart (Demo)
