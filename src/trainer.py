@@ -124,6 +124,26 @@ class Trainer():
 
                     if self.args.save_test_results:
                         if epoch % self.args.save_test_results_every == 0:
+                            lr_z_s = lr_z
+                            lr_z_s = torchvision.utils.make_grid(lr_z_s, normalize=True, padding=1)
+                            # img_save = img_save.clamp(0, 255).round()
+                            # print(img_save.shape)
+                            lr_z_filename = os.path.join('../experiment/test/',
+                                'results-{}'.format(d.dataset.name),
+                                '{}_lr_z_x{}'.format(filename[0], scale)+'.png',
+                            )
+                            lr_z_s = lr_z_s.unsqueeze(1)
+                            torchvision.utils.save_image(lr_z_s, lr_z_filename)
+
+                            hr_z_s = hr_z
+                            hr_z_s = torchvision.utils.make_grid(hr_z_s, normalize=True, padding=1)
+                            hr_z_s = hr_z_s.unsqueeze(1)
+                            hr_z_filename = os.path.join('../experiment/test/',
+                                'results-{}'.format(d.dataset.name),
+                                '{}_hr_z_x{}'.format(filename[0], scale)+'.png',
+                            )
+                            torchvision.utils.save_image(hr_z_s, hr_z_filename)
+
                             self.ckp.save_test_results(d, filename[0], save_list, scale)
 
                 self.ckp.psnr_log[-1, idx_data, idx_scale] /= len(d)

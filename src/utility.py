@@ -223,8 +223,8 @@ class checkpoint():
                 img_save = image.clone().detach().to(torch.device('cpu'))
                 if prefix_list[index].__contains__("_z"):  # lr_z hr_z vision
                     # img_save = unNormalize(img_save)
-                    img_save = img_save.unsqueeze(1)
-                    # img_save = img_save.clamp(0, 255).round()
+                    # img_save = img_save.unsqueeze(1)
+                    img_save = torchvision.utils.make_grid(img_save, padding=1, normalize=True)
                     torchvision.utils.save_image(img_save, file_path)
                 else:
                     if self.args.normalized:
